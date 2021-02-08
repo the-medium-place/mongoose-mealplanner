@@ -146,6 +146,29 @@ app.get('/populatedmeals', (req,res) => {
         console.log(err)
         res.send(err);
     })})
+
+app.post('/api/weeks', ({ body }, res) => {
+    db.Week.create(body)
+    .then(dbWeek => {
+        res.json(dbWeek)
+    })
+    .catch(err => {
+        console.log(err)
+        res.send(err);
+    })
+})
+
+app.post('/api/meals', (req, res) => {
+    console.log(req.body);
+    
+    db.Meal.create(req.body)
+    .then(dbMeal => {
+        db.Week.findOneAndUpdate({_id:req.body.weekId}, {$push: {meals: dbMeal._id}})
+        .then(dbWeek => res.send(dbWeek))
+    })
+    .catch(err => res.json(err))
+
+})
 // =============================================================================
 // LISTENER
 // =============================================================================
